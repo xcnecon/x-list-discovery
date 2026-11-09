@@ -27,7 +27,7 @@ x-list-discovery run demo
 
 ## 使用自己的名单
 
-在线数据来自第三方 [twitterapi.io](https://twitterapi.io)，需自备 API key，抓取消耗该服务额度。复制 `.env.example` 为 `.env`，填写 `TWITTERAPI_IO_KEY`，或在环境变量中设置。
+在线数据来自第三方 [twitterapi.io](https://twitterapi.io/?ref=thmbmzza)，需自备 API key，抓取消耗该服务额度。复制 `.env.example` 为 `.env`，填写 `TWITTERAPI_IO_KEY`，或在环境变量中设置。
 
 ```bash
 # 输入 X List 链接或数字 ID

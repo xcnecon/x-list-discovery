@@ -45,7 +45,7 @@ Each workbook includes a top preview, all candidates with selection reasons, sha
 
 ## Use your list
 
-Fetching uses [twitterapi.io](https://twitterapi.io), a paid third-party data provider. Supply your own key. Copy `.env.example` to `.env` and set `TWITTERAPI_IO_KEY`, or export that variable in your shell.
+Fetching uses [twitterapi.io](https://twitterapi.io/?ref=thmbmzza), a paid third-party data provider. Supply your own key. Copy `.env.example` to `.env` and set `TWITTERAPI_IO_KEY`, or export that variable in your shell.
 
 ```bash
 # Fetch list membership from a URL or numeric List ID
