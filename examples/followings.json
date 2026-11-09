@@ -1,0 +1,58 @@
+{
+  "Alice": [
+    {
+      "id": "10",
+      "userName": "MarketResearch",
+      "name": "Market Researcher",
+      "description": "Independent trader and data analyst",
+      "followers": 300,
+      "following": 80
+    },
+    {
+      "id": "11",
+      "userName": "DemoExchange",
+      "description": "Official account of the crypto exchange",
+      "followers": 1000000
+    },
+    {
+      "id": "12",
+      "userName": "DataObserver",
+      "description": "Watching markets",
+      "followers": 80
+    },
+    {
+      "id": "3",
+      "userName": "DemoProject",
+      "description": "Official account of our protocol"
+    }
+  ],
+  "Bob": [
+    {
+      "id": "10",
+      "userName": "MarketResearch",
+      "description": "Independent trader and data analyst",
+      "followers": 300
+    },
+    {
+      "id": "11",
+      "userName": "DemoExchange",
+      "description": "Official account of the crypto exchange",
+      "followers": 1000000
+    },
+    {
+      "id": "12",
+      "userName": "DataObserver",
+      "description": "Watching markets",
+      "followers": 80
+    }
+  ],
+  "DemoProject": [
+    {
+      "id": "10",
+      "userName": "MarketResearch",
+      "description": "Independent trader and data analyst",
+      "followers": 300,
+      "following": 80
+    }
+  ]
+}
