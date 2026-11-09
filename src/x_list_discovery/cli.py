@@ -61,6 +61,16 @@ def network_options(command):
     command.add_argument("--key-env", default="TWITTERAPI_IO_KEY", help="API-key environment variable name")
 
 
+def positive_int(value):
+    try:
+        result = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("Expected a positive integer") from None
+    if result < 1:
+        raise argparse.ArgumentTypeError("Expected a positive integer")
+    return result
+
+
 def parser():
     p = argparse.ArgumentParser(prog="x-list-discovery", description="Find shared follows outside an X list, plus underfollowed gems")
     p.add_argument("--version", action="version", version=__version__)
@@ -78,25 +88,25 @@ def parser():
     init.add_argument("--exclude", help="Optional CSV/JSON of already-followed accounts; never becomes a voting source")
     init.add_argument("--reviews", action="append", help="Profile-review JSON; repeatable, later decisions win")
     init.add_argument("--owner", default="", help="Optional account to exclude from targets")
-    init.add_argument("--min-common", type=int, default=2)
-    init.add_argument("--max-followers", type=int, default=50000, help="Default gem follower ceiling (exclusive)")
+    init.add_argument("--min-common", type=positive_int, default=2)
+    init.add_argument("--max-followers", type=positive_int, default=50000, help="Default gem follower ceiling (exclusive)")
     network_options(init)
     for name in ("fetch", "aggregate", "rank", "export", "run", "status", "import-graph", "exclude-followings"):
         command = commands.add_parser(name)
         command.add_argument("name")
         if name in {"fetch", "run", "exclude-followings"}:
             network_options(command)
-            command.add_argument("--workers", type=int, default=4)
+            command.add_argument("--workers", type=positive_int, default=4)
         if name in {"fetch", "run"}:
             command.add_argument("--refresh", action="store_true", help="Archive and replace old source caches")
         if name in {"rank", "export", "run"}:
             command.add_argument("--mode", choices=["both", "cofollow", "gems"], help="Default: workspace mode (both)")
         if name in {"rank", "run"}:
-            command.add_argument("--min-common", type=int)
-            command.add_argument("--max-followers", type=int, help="Follower ceiling for gems only")
+            command.add_argument("--min-common", type=positive_int)
+            command.add_argument("--max-followers", type=positive_int, help="Follower ceiling for gems only")
             command.add_argument("--all-targets", action="store_true", help="Skip optional profile filters; still exclude all original members")
         if name in {"export", "run"}:
-            command.add_argument("--top", type=int, default=100, help="Preview rows in Excel; full selected results are in CSV")
+            command.add_argument("--top", type=positive_int, default=100, help="Preview rows in Excel; full selected results are in CSV")
         if name == "run":
             command.add_argument("--fetch", action="store_true", help="Enable paid API fetching; omitted means offline")
         if name == "import-graph":
@@ -158,6 +168,8 @@ def execute(args):
             return {"excluded_accounts": len(users), "voting_seeds_unchanged": len(ws.seeds())}
         mode = args.mode or config.mode
         modes = ("cofollow", "gems") if mode == "both" else (mode,)
+        if args.command in {"rank", "run"} and mode == "cofollow" and args.max_followers is not None:
+            raise ValueError("--max-followers applies only to gems, never cofollow")
         if args.command == "run":
             if args.refresh and not args.fetch:
                 raise ValueError("--refresh requires --fetch; offline run never calls the API")
@@ -170,8 +182,6 @@ def execute(args):
             except ValueError:
                 pipeline.aggregate(ws)
         if args.command in {"rank", "run"}:
-            if mode == "cofollow" and args.max_followers is not None:
-                raise ValueError("--max-followers applies only to gems, never cofollow")
             ranked = {m: pipeline.rank(ws, m, args.min_common, args.max_followers if m == "gems" else None, args.all_targets) for m in modes}
             if args.command == "rank":
                 return {"rankings": ranked}

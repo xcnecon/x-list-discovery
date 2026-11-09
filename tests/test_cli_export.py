@@ -1,4 +1,6 @@
 import json
+import contextlib
+import io
 import os
 from pathlib import Path
 import subprocess
@@ -18,6 +20,23 @@ from x_list_discovery.workspace import Workspace, initialize
 
 
 class CLITests(unittest.TestCase):
+    def test_invalid_parameters_are_rejected_before_paid_fetch(self):
+        with tempfile.TemporaryDirectory() as temp:
+            ws, _, _ = fixture(temp)
+            args = cli.parser().parse_args(['--root', str(ws.path.parent), 'run', 'demo', '--fetch', '--mode', 'cofollow', '--max-followers', '100'])
+            with patch('x_list_discovery.cli.TwitterAPI') as client:
+                with self.assertRaisesRegex(ValueError, 'only to gems'):
+                    cli.execute(args)
+                client.assert_not_called()
+
+    def test_nonpositive_thresholds_fail_during_argument_parsing(self):
+        for options in [['init', 'demo', '--list', '123', '--min-common', '0'],
+                        ['run', 'demo', '--fetch', '--top', '-1'],
+                        ['fetch', 'demo', '--workers', '0']]:
+            with self.subTest(options=options), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit):
+                    cli.parser().parse_args(options)
+
     def test_offline_both_reports_and_list_isolation(self):
         with tempfile.TemporaryDirectory() as temp:
             ws, _, graph = fixture(temp, ready=False)

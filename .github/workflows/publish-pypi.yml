@@ -12,6 +12,12 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -e '.[dev]'
+      - name: Require the matching version tag
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          python -c "import os, x_list_discovery; assert os.environ['REF_TYPE'] == 'tag' and os.environ['REF_NAME'] == 'v' + x_list_discovery.__version__, 'Run publication from the matching version tag'"
       - run: python -m unittest discover -s tests -v
       - run: python -m build
       - run: python -m twine check dist/*
