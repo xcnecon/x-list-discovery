@@ -69,7 +69,7 @@ alice
 bob
 ```
 
-Supported username columns: `userName`, `username`, `screen_name`. Optional fields include `id`/`user_id`, `name`, `description`, `followers_count`, and `following_count`. IDs are strings, so large X IDs keep their precision. All supplied members vote by default; your own live following list is never silently used as the source.
+Supported username columns: `userName`, `username`, `screen_name`. Optional fields include `id`/`user_id`, `name`, `description`, `followers_count`, and `following_count`. IDs are numeric strings, so large X IDs keep their precision. All supplied members vote by default; your own live following list is never silently used as the source.
 
 ## Control the results
 

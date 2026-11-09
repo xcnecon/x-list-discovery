@@ -38,7 +38,10 @@ def handle(value):
 
 def profile(row):
     name = handle(first(row, ("userName", "username", "screen_name")))
-    result = {"id": str(first(row, ("id", "user_id"), "")), "userName": name,
+    uid = str(first(row, ("id", "user_id"), "")).strip()
+    if uid and not re.fullmatch(r"[0-9]{1,30}", uid):
+        raise ValueError("Account ID must be a numeric string: " + name)
+    result = {"id": uid, "userName": name,
               "name": row.get("name") or "", "description": row.get("description") or ""}
     for key, aliases in {
         "followers_count": ("followers_count", "followers", "followersCount"),

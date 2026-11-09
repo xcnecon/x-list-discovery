@@ -30,6 +30,14 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "conflicting IDs"):
             profiles(path)
 
+    def test_invalid_ids_are_rejected_before_creating_cache_paths(self):
+        path = self.root / "invalid.json"
+        write_json(path, [{"username": "Alice", "id": "../../outside"}])
+        ws = Workspace(self.root, "invalid")
+        with self.assertRaisesRegex(ValueError, "numeric string"):
+            initialize(ws, path)
+        self.assertFalse(ws.path.exists())
+
     def test_default_seeds_remove_projects_keep_full_exclusion_population(self):
         ws, _, _ = fixture(self.root)
         self.assertEqual(len(ws.members()), 3)
